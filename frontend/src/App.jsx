@@ -6,6 +6,7 @@ import NotFound from './pages/NotFound.jsx';
 import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
 import TermsOfService from './pages/TermsOfService.jsx';
 import Contact from './pages/Contact.jsx';
+import About from './pages/About.jsx';
 import AdminApp from './pages/admin/AdminApp.jsx';
 import { SiteProvider } from './context/SiteContext.jsx';
 import { useCurrentPath } from './hooks/useCurrentPath.js';
@@ -126,6 +127,10 @@ function Page({ currentPath }) {
 
   if (currentPath === PATHS.contact) {
     return <Contact />;
+  }
+
+  if (currentPath === PATHS.about) {
+    return <About />;
   }
 
   if (!isHome) {

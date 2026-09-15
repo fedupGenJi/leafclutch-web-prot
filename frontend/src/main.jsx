@@ -5,6 +5,7 @@ import './styles/index.css';
 import './styles/chrome.css';
 import './styles/legal.css';
 import './styles/contact.css';
+import './styles/about.css';
 import './styles/admin.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
