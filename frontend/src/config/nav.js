@@ -47,3 +47,34 @@ export function isPathActive(current, target, exact = false) {
 export function anyPathActive(current, items) {
   return items.some((item) => isPathActive(current, item.path, item.exact));
 }
+
+/**
+ * Admin routes. Unlike the marketing paths above, these are real and live
+ * behind auth — they never go through hrefFor()/PLACEHOLDER_LINK.
+ */
+export const ADMIN_PATHS = {
+  root: '/admin',
+  login: '/admin/login',
+  dashboard: '/admin/dashboard',
+};
+
+// Order here is the order the dashboard nav renders in.
+export const ADMIN_SECTIONS = [
+  { key: 'hero-content', label: 'Hero Content', path: `${ADMIN_PATHS.dashboard}/hero-content` },
+  { key: 'services', label: 'Services', path: `${ADMIN_PATHS.dashboard}/services` },
+  { key: 'socials', label: 'Socials', path: `${ADMIN_PATHS.dashboard}/socials` },
+  { key: 'jobs-internships', label: 'Jobs & Internships', path: `${ADMIN_PATHS.dashboard}/jobs-internships` },
+];
+
+export const ADMIN_SETTINGS_SECTION = {
+  key: 'settings',
+  label: 'Settings',
+  path: `${ADMIN_PATHS.dashboard}/settings`,
+};
+
+export const DEFAULT_ADMIN_SECTION = ADMIN_SECTIONS[0];
+
+export function findAdminSection(path) {
+  const all = [...ADMIN_SECTIONS, ADMIN_SETTINGS_SECTION];
+  return all.find((section) => isPathActive(path, section.path, true)) || null;
+}

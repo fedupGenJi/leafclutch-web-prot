@@ -7,7 +7,7 @@ const { pool, ensureTables } = require('./db');
 const { seed } = require('./db/seed');
 const { ensureAdmin } = require('./db/ensureAdmin');
 const contentRoutes = require('./routes/content.routes');
-const authRoutes = require('./routes/auth.routes');
+const adminRoutes = require('./routes/admin.routes');
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -31,7 +31,7 @@ app.use(
 );
 
 app.use('/api', contentRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/api/health', async (req, res) => {
   try {

@@ -52,16 +52,32 @@ async function isEmpty(client, table) {
   return Number(rows[0].n) === 0;
 }
 
+async function hasAdmin(client) {
+  const { rows } = await client.query('SELECT COUNT(*) AS n FROM admin');
+  return Number(rows[0].n) > 0;
+}
+
 /**
- * Seeds only tables that are empty, so restarting the server never overwrites
- * content an admin has edited. Runs on a single checked-out client so the
- * per-table inserts below can each be wrapped in their own transaction.
+ * Seeds demo content only on a genuinely fresh database — gated on whether
+ * an admin account exists yet, not on a per-table emptiness check. Without
+ * this gate, an admin deleting every job posting (leaving the table
+ * legitimately empty) would get those placeholder jobs silently re-inserted
+ * on the next server restart.
+ *
+ * IMPORTANT: this means ensureAdmin() must run *before* seed() in your boot
+ * sequence (server.js) — if the admin account is created first, hasAdmin()
+ * will always be true and none of this demo content will ever seed, even on
+ * the true first boot.
  */
 async function seed() {
   const client = await pool.connect();
   const filled = [];
 
   try {
+    if (await hasAdmin(client)) {
+      return filled; // not a fresh install — never touch content tables again
+    }
+
     if (await isEmpty(client, 'hero_content')) {
       await client.query(
         `INSERT INTO hero_content

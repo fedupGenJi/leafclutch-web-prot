@@ -38,11 +38,15 @@ CREATE TABLE IF NOT EXISTS services (
   is_active    BOOLEAN NOT NULL DEFAULT true
 );
 
+-- location and apply_link support the admin "jobs" API, which presents jobs
+-- and internships as one merged list (see routes/admin.routes.js).
 CREATE TABLE IF NOT EXISTS jobs (
   id           SERIAL PRIMARY KEY,
   slug         TEXT NOT NULL UNIQUE,
   name         TEXT NOT NULL,
   description  TEXT,
+  location     TEXT,
+  apply_link   TEXT,
   sort_order   INTEGER NOT NULL DEFAULT 0,
   is_active    BOOLEAN NOT NULL DEFAULT true
 );
@@ -52,6 +56,8 @@ CREATE TABLE IF NOT EXISTS internships (
   slug         TEXT NOT NULL UNIQUE,
   name         TEXT NOT NULL,
   description  TEXT,
+  location     TEXT,
+  apply_link   TEXT,
   sort_order   INTEGER NOT NULL DEFAULT 0,
   is_active    BOOLEAN NOT NULL DEFAULT true
 );
@@ -66,6 +72,13 @@ CREATE TABLE IF NOT EXISTS admin (
   password_hash  TEXT NOT NULL,
   created_at     TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Safe to re-run: only applies if this schema.sql already ran once before
+-- these columns existed.
+ALTER TABLE jobs        ADD COLUMN IF NOT EXISTS location   TEXT;
+ALTER TABLE jobs        ADD COLUMN IF NOT EXISTS apply_link TEXT;
+ALTER TABLE internships ADD COLUMN IF NOT EXISTS location   TEXT;
+ALTER TABLE internships ADD COLUMN IF NOT EXISTS apply_link TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_services_sort    ON services (is_active, sort_order);
 CREATE INDEX IF NOT EXISTS idx_jobs_sort        ON jobs (is_active, sort_order);

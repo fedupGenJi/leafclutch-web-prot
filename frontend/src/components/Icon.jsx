@@ -32,7 +32,73 @@ const PATHS = {
   chevronDown: <path d="M5 9l7 7 7-7" {...stroke} />,
   menu: <path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h17" {...stroke} />,
   close: <path d="M5.5 5.5l13 13M18.5 5.5l-13 13" {...stroke} />,
+  check: <path d="M4.5 12.5l5 5 10-11" {...stroke} />,
+  alert: (
+    <>
+      <path d="M12 3.5l9.5 16.5h-19L12 3.5z" {...stroke} />
+      <path d="M12 10v4.5" {...stroke} />
+      <circle cx="12" cy="17.3" r="0.9" fill="currentColor" stroke="none" />
+    </>
+  ),
+  trash: (
+    <>
+      <path d="M4.5 7h15M9.5 7V5a1.5 1.5 0 011.5-1.5h2A1.5 1.5 0 0114.5 5v2" {...stroke} />
+      <path d="M6.5 7l1 12.5A2 2 0 009.5 21.5h5a2 2 0 002-2L17.5 7" {...stroke} />
+      <path d="M10 11v6M14 11v6" {...stroke} />
+    </>
+  ),
+  pencil: (
+    <path
+      d="M4 20l.7-3.6L15.9 5.2a1.7 1.7 0 012.4 0l1.5 1.5a1.7 1.7 0 010 2.4L8.6 20.3 4 21l1-1z"
+      {...stroke}
+    />
+  ),
+  plus: <path d="M12 4.5v15M4.5 12h15" {...stroke} />,
+  eye: (
+    <>
+      <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" {...stroke} />
+      <circle cx="12" cy="12" r="3" {...stroke} />
+    </>
+  ),
+  eyeOff: (
+    <>
+      <path d="M3.5 3.5l17 17" {...stroke} />
+      <path d="M10.6 5.7A10.6 10.6 0 0112 5.5c6 0 9.5 6.5 9.5 6.5a15.6 15.6 0 01-3.2 4M7 6.9C4.2 8.7 2.5 12 2.5 12S6 18.5 12 18.5a9.7 9.7 0 004-.85" {...stroke} />
+      <path d="M9.9 10a3 3 0 004.1 4.1" {...stroke} />
+    </>
+  ),
+  lock: (
+    <>
+      <rect x="5" y="10.5" width="14" height="10" rx="2.2" {...stroke} />
+      <path d="M8 10.5V7.5a4 4 0 018 0v3" {...stroke} />
+      <circle cx="12" cy="15" r="1.3" fill="currentColor" stroke="none" />
+    </>
+  ),
   arrowUpRight: <path d="M7 17L17 7M8.5 7H17v8.5" {...stroke} />,
+
+  list: (
+    <>
+      <circle cx="4.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+      <circle cx="4.5" cy="12" r="1" fill="currentColor" stroke="none" />
+      <circle cx="4.5" cy="17.5" r="1" fill="currentColor" stroke="none" />
+      <path d="M8.5 6.5h11M8.5 12h11M8.5 17.5h11" {...stroke} />
+    </>
+  ),
+  settings: (
+    <>
+      <circle cx="12" cy="12" r="3.2" {...stroke} />
+      <path
+        d="M19.4 13.5a7.6 7.6 0 000-3l1.9-1.5-2-3.4-2.3.7a7.6 7.6 0 00-2.6-1.5L14 2.5h-4l-.4 2.3a7.6 7.6 0 00-2.6 1.5l-2.3-.7-2 3.4L4.6 10.5a7.6 7.6 0 000 3l-1.9 1.5 2 3.4 2.3-.7a7.6 7.6 0 002.6 1.5l.4 2.3h4l.4-2.3a7.6 7.6 0 002.6-1.5l2.3.7 2-3.4-1.9-1.5z"
+        {...stroke}
+      />
+    </>
+  ),
+  logout: (
+    <>
+      <path d="M9 21H5.5a2 2 0 01-2-2V5a2 2 0 012-2H9" {...stroke} />
+      <path d="M16 17l5-5-5-5M21 12H9" {...stroke} />
+    </>
+  ),
 
   facebook: (
     <path

@@ -1,6 +1,7 @@
 import Icon from './Icon.jsx';
 import { useSite } from '../context/SiteContext.jsx';
 import { PATHS, hrefFor } from '../config/nav.js';
+import { navigateOnClick } from '../utils/navigate.js';
 
 const MISSING = '404';
 
@@ -50,6 +51,13 @@ export default function Footer() {
                 value={heroContent.email}
                 href={heroContent.email !== MISSING ? `mailto:${heroContent.email}` : null}
               />
+              {heroContent.emailSecondary && (
+                <ContactRow
+                  icon="mail"
+                  value={heroContent.emailSecondary}
+                  href={`mailto:${heroContent.emailSecondary}`}
+                />
+              )}
               <ContactRow
                 icon="phone"
                 value={heroContent.contactNumber}
@@ -83,7 +91,11 @@ export default function Footer() {
           <nav className="footer-legal" aria-label="Legal">
             <a href={hrefFor(PATHS.privacy)}>Privacy Policy</a>
             <a href={hrefFor(PATHS.terms)}>Terms of Service</a>
-            <a href={hrefFor(PATHS.admin)} className="footer-admin">Admin</a>
+            {/* Admin is real and live, unlike the placeholder-linked pages
+                above — it always points at /admin and navigates client-side. */}
+            <a href={PATHS.admin} className="footer-admin" onClick={navigateOnClick(PATHS.admin)}>
+              Admin
+            </a>
           </nav>
         </div>
       </div>

@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import LoadingScreen from './components/LoadingScreen.jsx';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
+import AdminApp from './pages/admin/AdminApp.jsx';
 import { SiteProvider } from './context/SiteContext.jsx';
 import { useCurrentPath } from './hooks/useCurrentPath.js';
-import { PATHS } from './config/nav.js';
+import { PATHS, isPathActive } from './config/nav.js';
 import brand from './brand.js';
 
 // The intro is a brand moment, not a data wait. These are tuned against the
@@ -29,6 +30,7 @@ function applyTheme(colors) {
 
 export default function App() {
   const currentPath = useCurrentPath();
+  const isAdminRoute = isPathActive(currentPath, PATHS.admin);
 
   // The intro plays on the homepage only. Anywhere else it would sit between
   // the visitor and the content they navigated to, so subpages mount straight
@@ -60,6 +62,19 @@ export default function App() {
       if (leaveTimer) clearTimeout(leaveTimer);
     };
   }, [isIntroRoute]);
+
+  // The admin app is a separate shell entirely — no marketing navbar/footer,
+  // no intro. It still sits inside SiteProvider so it can read the same
+  // logo/site data as the public site (e.g. the topbar logo).
+  if (isAdminRoute) {
+    return (
+      <SiteProvider>
+        <div className="site">
+          <AdminApp />
+        </div>
+      </SiteProvider>
+    );
+  }
 
   return (
     // The provider sits outside the loading gate so the single /api/site

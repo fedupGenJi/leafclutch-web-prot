@@ -9,6 +9,7 @@ export const FALLBACK_SITE = {
   heroContent: {
     desc: '404',
     email: '404',
+    emailSecondary: null,
     contactNumber: '404',
     contactNumberSecondary: null,
     address: '404',
@@ -26,7 +27,13 @@ export async function fetchSite() {
   return {
     assets: { ...FALLBACK_SITE.assets, ...(data.assets || {}) },
     heroContent: { ...FALLBACK_SITE.heroContent, ...(data.heroContent || {}) },
-    socials: Array.isArray(data.socials) ? data.socials : [],
-    services: Array.isArray(data.services) ? data.services : [],
+    // Defensive filter: the public endpoint is *supposed* to only return
+    // active rows, but if a backend query ever forgets `is_active = true`
+    // (e.g. filtering socials by `url` presence only), an inactive row
+    // slipping through the API shouldn't still render on the live site.
+    // `is_active === false` is the only thing that hides a row — rows
+    // where the field is simply absent are treated as active.
+    socials: Array.isArray(data.socials) ? data.socials.filter((s) => s.is_active !== false) : [],
+    services: Array.isArray(data.services) ? data.services.filter((s) => s.is_active !== false) : [],
   };
 }
