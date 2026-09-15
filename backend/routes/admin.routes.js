@@ -212,113 +212,92 @@ router.delete('/services/:id', requireAuth, async (req, res, next) => {
 // ---------------------------------------------------------------------------
 // Jobs & Internships
 // ---------------------------------------------------------------------------
-// The DB keeps these as two tables, but the frontend contract wants one
-// merged list with a `type: "job" | "internship"` field. The composite id
-// ("job-3" / "internship-1") is how a PUT/DELETE knows which table to hit.
+// The frontend now calls these as two separate CRUD resources (jobsApi and
+// internshipsApi, each hitting its own basePath) rather than one merged list
+// with a `type` field. Since `jobs` and `internships` are two tables with an
+// identical shape, both routers are built from the same factory.
 
-function toApiJob(row, type) {
+function toApiJobRow(row) {
   return {
-    id: `${type}-${row.id}`,
+    id: row.id,
     title: row.name,
-    type,
     location: row.location || '',
     description: row.description || '',
     applyLink: row.apply_link || '',
   };
 }
 
-function parseCompositeId(id) {
-  const match = /^(job|internship)-(\d+)$/.exec(String(id));
-  if (!match) return null;
-  return {
-    type: match[1],
-    table: match[1] === 'job' ? 'jobs' : 'internships',
-    dbId: Number(match[2]),
-  };
+function createJobsCrudRouter(table) {
+  const jobsRouter = express.Router();
+
+  jobsRouter.get('/', requireAuth, async (req, res, next) => {
+    try {
+      const { rows } = await pool.query(`SELECT * FROM ${table} ORDER BY sort_order, id`);
+      res.json(rows.map(toApiJobRow));
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  jobsRouter.post('/', requireAuth, async (req, res, next) => {
+    try {
+      const { title, location, description, applyLink } = req.body || {};
+      if (!title) return res.status(400).json({ message: 'title is required' });
+
+      const slug = slugify(title);
+      const { rows: maxRows } = await pool.query(
+        `SELECT COALESCE(MAX(sort_order), 0) + 1 AS next FROM ${table}`
+      );
+
+      const { rows } = await pool.query(
+        `INSERT INTO ${table} (slug, name, description, location, apply_link, sort_order, is_active)
+         VALUES ($1, $2, $3, $4, $5, $6, true)
+         RETURNING *`,
+        [slug, title, description || null, location || null, applyLink || null, maxRows[0].next]
+      );
+      res.status(201).json(toApiJobRow(rows[0]));
+    } catch (err) {
+      if (err.code === '23505') {
+        return res.status(409).json({ message: 'An entry with that title already exists' });
+      }
+      next(err);
+    }
+  });
+
+  jobsRouter.put('/:id', requireAuth, async (req, res, next) => {
+    try {
+      const { title, location, description, applyLink } = req.body || {};
+
+      const { rows } = await pool.query(
+        `UPDATE ${table}
+         SET name = $1, description = $2, location = $3, apply_link = $4
+         WHERE id = $5
+         RETURNING *`,
+        [title, description || null, location || null, applyLink || null, req.params.id]
+      );
+
+      if (!rows.length) return res.status(404).json({ message: 'Entry not found' });
+      res.json(toApiJobRow(rows[0]));
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  jobsRouter.delete('/:id', requireAuth, async (req, res, next) => {
+    try {
+      const { rowCount } = await pool.query(`DELETE FROM ${table} WHERE id = $1`, [req.params.id]);
+      if (!rowCount) return res.status(404).json({ message: 'Entry not found' });
+      res.status(204).send();
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  return jobsRouter;
 }
 
-router.get('/jobs', requireAuth, async (req, res, next) => {
-  try {
-    const [jobsRes, internshipsRes] = await Promise.all([
-      pool.query('SELECT * FROM jobs ORDER BY sort_order, id'),
-      pool.query('SELECT * FROM internships ORDER BY sort_order, id'),
-    ]);
-    res.json([
-      ...jobsRes.rows.map((r) => toApiJob(r, 'job')),
-      ...internshipsRes.rows.map((r) => toApiJob(r, 'internship')),
-    ]);
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post('/jobs', requireAuth, async (req, res, next) => {
-  try {
-    const { title, type, location, description, applyLink } = req.body || {};
-
-    if (!title || (type !== 'job' && type !== 'internship')) {
-      return res.status(400).json({ message: 'title and a valid type ("job" or "internship") are required' });
-    }
-
-    const table = type === 'job' ? 'jobs' : 'internships';
-    const slug = slugify(title);
-
-    const { rows: maxRows } = await pool.query(
-      `SELECT COALESCE(MAX(sort_order), 0) + 1 AS next FROM ${table}`
-    );
-
-    const { rows } = await pool.query(
-      `INSERT INTO ${table} (slug, name, description, location, apply_link, sort_order, is_active)
-       VALUES ($1, $2, $3, $4, $5, $6, true)
-       RETURNING *`,
-      [slug, title, description || null, location || null, applyLink || null, maxRows[0].next]
-    );
-    res.status(201).json(toApiJob(rows[0], type));
-  } catch (err) {
-    if (err.code === '23505') {
-      return res.status(409).json({ message: 'An entry with that title already exists' });
-    }
-    next(err);
-  }
-});
-
-// Editing an entry's `type` (moving it between the jobs and internships
-// tables) isn't supported — only title/location/description/applyLink can
-// change. If you need that, delete and recreate with the new type.
-router.put('/jobs/:id', requireAuth, async (req, res, next) => {
-  try {
-    const parsed = parseCompositeId(req.params.id);
-    if (!parsed) return res.status(404).json({ message: 'Job not found' });
-
-    const { title, location, description, applyLink } = req.body || {};
-
-    const { rows } = await pool.query(
-      `UPDATE ${parsed.table}
-       SET name = $1, description = $2, location = $3, apply_link = $4
-       WHERE id = $5
-       RETURNING *`,
-      [title, description || null, location || null, applyLink || null, parsed.dbId]
-    );
-
-    if (!rows.length) return res.status(404).json({ message: 'Job not found' });
-    res.json(toApiJob(rows[0], parsed.type));
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.delete('/jobs/:id', requireAuth, async (req, res, next) => {
-  try {
-    const parsed = parseCompositeId(req.params.id);
-    if (!parsed) return res.status(404).json({ message: 'Job not found' });
-
-    const { rowCount } = await pool.query(`DELETE FROM ${parsed.table} WHERE id = $1`, [parsed.dbId]);
-    if (!rowCount) return res.status(404).json({ message: 'Job not found' });
-    res.status(204).send();
-  } catch (err) {
-    next(err);
-  }
-});
+router.use('/jobs', createJobsCrudRouter('jobs'));
+router.use('/internships', createJobsCrudRouter('internships'));
 
 // ---------------------------------------------------------------------------
 // Socials

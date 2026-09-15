@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import LoadingScreen from './components/LoadingScreen.jsx';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
+import NotFound from './pages/NotFound.jsx';
 import AdminApp from './pages/admin/AdminApp.jsx';
 import { SiteProvider } from './context/SiteContext.jsx';
 import { useCurrentPath } from './hooks/useCurrentPath.js';
@@ -95,13 +96,19 @@ export default function App() {
   );
 }
 
-// Placeholder until real pages exist. Every route currently lands here.
+// Home gets its own light placeholder; every other route — including /404,
+// which is where every real link currently points (see config/nav.js) —
+// renders NotFound instead.
 function Page({ currentPath }) {
   const isHome = currentPath === PATHS.home;
 
+  if (!isHome) {
+    return <NotFound />;
+  }
+
   return (
     <main className="homepage">
-      <h1>{isHome ? brand.siteName : currentPath}</h1>
+      <h1>{brand.siteName}</h1>
       <p>Page content coming soon.</p>
     </main>
   );

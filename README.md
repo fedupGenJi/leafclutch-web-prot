@@ -1,6 +1,6 @@
 # Leafclutch Web
 
-Frontend (Vite + React) and content API (Express + SQLite).
+A small prototype site: a React (Vite) frontend plus an Express + Postgres API behind it, with an admin panel for editing content.
 
 ## Running it
 
@@ -11,71 +11,30 @@ cd backend && npm install && npm start     # http://localhost:5000
 cd frontend && npm install && npm run dev  # http://localhost:5173
 ```
 
-Vite proxies `/api` and `/assets` to the backend, so open the frontend URL only.
+Open the frontend URL — Vite proxies `/api` and `/assets` to the backend for you.
 
-On first boot the backend creates `backend/data/leafclutch.db`, creates any
-missing tables, and seeds the ones that are empty. It logs which tables it
-found versus created. Restarting never overwrites existing rows.
+On first boot the backend creates its own Postgres tables, seeds any that are empty, and creates an admin login (it emails the generated password via Resend, or just prints it to the console if that fails). Restarting never touches existing rows.
 
 ## Where images come from
 
-| Image                                 | Served by                         |
-| ------------------------------------- | --------------------------------- |
-| Intro animation logo                  | `frontend/public/brandIcon.png` |
-| Browser tab favicon                   | `frontend/public/brandIcon.png` |
-| Everything on a page (navbar, footer) | backend`/assets/*`              |
-
-The three backend assets are `logo-hor.png`, `logo-ver.png` and `icon.png`.
-All four files have had their baked-in transparent padding trimmed, so CSS
-sizing matches the visible artwork.
+The logo used in the intro animation and the browser tab icon are the only images the frontend keeps locally (`frontend/public/`). Everything else on the actual pages — navbar, footer — is served by the backend from `backend/assets/*` at `/assets/*`.
 
 ## API
 
-| Route                    | Returns                                                              |
-| ------------------------ | -------------------------------------------------------------------- |
-| `GET /api/site`        | assets + heroContent + socials + services (one call for the browser) |
-| `GET /api/hero`        | heroContent + socials                                                |
-| `GET /api/services`    | services                                                             |
-| `GET /api/jobs`        | jobs                                                                 |
-| `GET /api/internships` | internships                                                          |
-| `GET /api/health`      | liveness                                                             |
+Public, read-only, no auth:
 
-## Tables
+- `GET /api/site` — everything the homepage needs, one call
+- `GET /api/hero`, `/api/services`, `/api/jobs`, `/api/internships`
+- `GET /api/health`
 
-- **hero_content** — one row. `description`, `email`, `phone_primary`,
-  `phone_secondary`, `address_display`, `map_link`.
-- **socials** — `platform`, `label`, `icon_key`, `url`, `sort_order`,
-  `is_active`. A row is its own record so an admin can add or delete platforms
-  without a migration. `icon_key` must match a key in
-  `frontend/src/components/Icon.jsx`.
-- **services** / **jobs** / **internships** — `slug`, `name`, `description`,
-  `sort_order`, `is_active`.
+Everything under `/api/admin` needs a login: session/login, and CRUD for hero content, services, socials, jobs, and internships. Jobs and internships are two separate resources now (each with its own `GET/POST/PUT/DELETE`), not one merged list.
 
-## Placeholder behaviour
+## Content model
 
-Nothing is wired to real pages yet, so every link points at `/404`.
+- **hero_content** — one row: description, contact info, address, map link.
+- **socials** — one row per platform (facebook, x, linkedin, ...). Adding or removing a platform is just a row, no migration needed. The icon shown for it, though, still comes from a fixed set built into the frontend — a genuinely new platform needs a small frontend change too, not just a new row.
+- **services / jobs / internships** — name + description, plus location/apply link for jobs and internships.
 
-Missing content renders the string `404` instead of collapsing to an empty
-element — see `backend/utils/fallback.js`. Links are the exception: a missing
-url becomes `null` rather than the string `404`, because `href="404"` would
-resolve as a relative path. Socials with no url are dropped by the API and
-never reach the footer, which is how the "show the icon only if a link exists"
-rule is enforced.
+## Placeholder behavior
 
-If the API is unreachable entirely, the navbar and footer still render using
-the placeholders in `frontend/src/api/site.js`.
-
-## Layout notes
-
-The navbar and footer share `--shell-min` (320px) and `--shell-max` (1320px)
-from `index.css`. Between those the chrome scales with the viewport; outside
-them it stops.
-
-Breakpoints:
-
-- **1100px** — footer brand block spans the full row, link columns sit beneath.
-- **1024px** — navbar collapses to logo plus menu button.
-- **720px** — every footer column stacks vertically.
-
-The navbar logo scrolls to the top of the current page. The footer logo
-navigates home.
+No real subpages exist yet, so every link currently points at `/404`, and any content field that hasn't been filled in yet shows the literal text `404` rather than just being blank. Both of these go away once real pages exist to link to.

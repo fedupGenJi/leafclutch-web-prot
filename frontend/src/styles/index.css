@@ -74,6 +74,34 @@ h1 {
   margin: 0;
 }
 
+/* ---------------------------------------------------------------- NotFound */
+
+.notfound-badge {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-secondary) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-secondary) 30%, transparent);
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.notfound-home-link {
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+  padding-bottom: 2px;
+}
+
+.notfound-home-link:hover {
+  border-color: var(--color-primary);
+}
+
 /* ---------------------------------------------------------- Loading screen */
 
 .loading-screen {
