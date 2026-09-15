@@ -9,7 +9,15 @@ const FIELDS = [
   { key: 'contactNumber', label: 'Contact number', type: 'text' },
   { key: 'contactNumberSecondary', label: 'Secondary contact number', type: 'text' },
   { key: 'address', label: 'Address', type: 'text' },
-  { key: 'mapLink', label: 'Map link', type: 'url' },
+  {
+    key: 'mapLink',
+    label: 'Map link',
+    type: 'url',
+    hint:
+      'For the full place card (rating, reviews, name) on the Contact page, paste the src ' +
+      'from Google Maps → search your business → Share → Embed a map → Copy HTML (use the ' +
+      'link inside src="..."). A plain address or shared place link only shows a bare pin.',
+  },
 ];
 
 export default function HeroContentSection() {
@@ -82,6 +90,7 @@ export default function HeroContentSection() {
                   onChange={(e) => setField(field.key, e.target.value)}
                 />
               )}
+              {field.hint && <small className="field-hint">{field.hint}</small>}
             </label>
           ))}
 

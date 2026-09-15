@@ -4,6 +4,7 @@ import RollingTextButton from './RollingTextButton.jsx';
 import { useSite } from '../context/SiteContext.jsx';
 import { useCurrentPath } from '../hooks/useCurrentPath.js';
 import { PATHS, hrefFor, isPathActive, anyPathActive } from '../config/nav.js';
+import { navigateOnClick } from '../utils/navigate.js';
 
 const MOBILE_BREAKPOINT = 1024;
 // Grace period when the pointer crosses the gap between a trigger and its
@@ -110,6 +111,15 @@ export default function Navbar() {
     setOpenMenu((prev) => (prev === menu ? null : menu));
   }
 
+  // The Contact button now navigates client-side instead of doing a full
+  // page reload to the /404 placeholder, so — like the logo — it needs to
+  // close the mobile menu itself rather than relying on the reload to do it.
+  const handleContactNavigate = (e) => {
+    setMobileOpen(false);
+    setOpenMenu(null);
+    navigateOnClick(PATHS.contact)(e);
+  };
+
   return (
     <header className="navbar" ref={navRef}>
       <div className="navbar-inner">
@@ -154,7 +164,11 @@ export default function Navbar() {
         </nav>
 
         <div className="navbar-actions">
-          <RollingTextButton href={hrefFor(PATHS.contact)} label="Contact Us" />
+          <RollingTextButton
+            href={PATHS.contact}
+            label="Contact Us"
+            onNavigate={handleContactNavigate}
+          />
 
           <button
             type="button"
@@ -195,9 +209,10 @@ export default function Navbar() {
           />
 
           <RollingTextButton
-            href={hrefFor(PATHS.contact)}
+            href={PATHS.contact}
             label="Contact Us"
             className="mobile-contact"
+            onNavigate={handleContactNavigate}
           />
         </nav>
       </div>

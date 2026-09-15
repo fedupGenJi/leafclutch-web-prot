@@ -8,6 +8,7 @@ const { seed } = require('./db/seed');
 const { ensureAdmin } = require('./db/ensureAdmin');
 const contentRoutes = require('./routes/content.routes');
 const adminRoutes = require('./routes/admin.routes');
+const contactRoutes = require('./routes/contact.routes');
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -31,6 +32,7 @@ app.use(
 );
 
 app.use('/api', contentRoutes);
+app.use('/api', contactRoutes);
 app.use('/api/admin', adminRoutes);
 
 app.get('/api/health', async (req, res) => {

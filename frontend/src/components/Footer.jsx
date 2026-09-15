@@ -10,14 +10,14 @@ const COMPANY_LINKS = [
   { label: 'About Us', href: hrefFor(PATHS.about) },
   { label: 'Services', href: hrefFor(PATHS.services) },
   { label: 'Our Products', href: hrefFor(PATHS.products) },
-  { label: 'Contact', href: hrefFor(PATHS.contact) },
+  { label: 'Contact', href: PATHS.contact, onClick: navigateOnClick(PATHS.contact) },
 ];
 
 const RESOURCE_LINKS = [
   { label: 'Blogs & Insights', href: hrefFor(PATHS.blogs) },
   { label: 'FAQs', href: hrefFor(PATHS.faq) },
-  { label: 'Privacy Policy', href: hrefFor(PATHS.privacy) },
-  { label: 'Terms of Service', href: hrefFor(PATHS.terms) },
+  { label: 'Privacy Policy', href: PATHS.privacy, onClick: navigateOnClick(PATHS.privacy) },
+  { label: 'Terms of Service', href: PATHS.terms, onClick: navigateOnClick(PATHS.terms) },
 ];
 
 export default function Footer() {
@@ -89,8 +89,12 @@ export default function Footer() {
           </p>
 
           <nav className="footer-legal" aria-label="Legal">
-            <a href={hrefFor(PATHS.privacy)}>Privacy Policy</a>
-            <a href={hrefFor(PATHS.terms)}>Terms of Service</a>
+            <a href={PATHS.privacy} onClick={navigateOnClick(PATHS.privacy)}>
+              Privacy Policy
+            </a>
+            <a href={PATHS.terms} onClick={navigateOnClick(PATHS.terms)}>
+              Terms of Service
+            </a>
             {/* Admin is real and live, unlike the placeholder-linked pages
                 above — it always points at /admin and navigates client-side. */}
             <a href={PATHS.admin} className="footer-admin" onClick={navigateOnClick(PATHS.admin)}>
@@ -111,7 +115,9 @@ function FooterColumn({ title, links }) {
       <ul>
         {links.map((link) => (
           <li key={link.key || link.label}>
-            <a href={link.href}>{link.label}</a>
+            <a href={link.href} onClick={link.onClick}>
+              {link.label}
+            </a>
           </li>
         ))}
       </ul>

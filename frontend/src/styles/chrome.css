@@ -366,20 +366,24 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  /* grid-template-rows 0fr -> 1fr animates to the content's natural height
-     without hardcoding a max-height guess that clips longer service lists. */
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 260ms ease;
+  /* Bounded to roughly 4 rows' worth of space and scrollable beyond that —
+     a group with a long list of sub-items (e.g. Services, populated from the
+     CMS) opens within its own "division" of the menu instead of pushing
+     every item below it off-screen. The rest of the menu (Home, Products,
+     Others, Contact) stays reachable without needing to scroll past the
+     open dropdown first. */
+  max-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transition: max-height 260ms ease;
 }
 
 .mobile-group.is-open .mobile-sublist {
-  grid-template-rows: 1fr;
+  max-height: 208px;
 }
 
 .mobile-sublist > li {
   min-height: 0;
-  overflow: hidden;
 }
 
 .mobile-sublist a {

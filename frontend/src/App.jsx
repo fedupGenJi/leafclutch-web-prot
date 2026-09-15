@@ -3,6 +3,9 @@ import LoadingScreen from './components/LoadingScreen.jsx';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
 import NotFound from './pages/NotFound.jsx';
+import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
+import TermsOfService from './pages/TermsOfService.jsx';
+import Contact from './pages/Contact.jsx';
 import AdminApp from './pages/admin/AdminApp.jsx';
 import { SiteProvider } from './context/SiteContext.jsx';
 import { useCurrentPath } from './hooks/useCurrentPath.js';
@@ -46,6 +49,16 @@ export default function App() {
   useEffect(() => {
     applyTheme(brand.colors);
   }, []);
+
+  // Every client-side navigation (including between Privacy Policy and
+  // Terms of Service, which otherwise render at whatever scroll position the
+  // previous page was left at) should land at the top of the new page —
+  // matching how a real page load behaves. Anchor jumps within a page (e.g.
+  // the legal pages' "On this page" links) only change the hash, not the
+  // pathname, so they're untouched by this.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentPath]);
 
   useEffect(() => {
     if (!isIntroRoute) return undefined;
@@ -96,11 +109,24 @@ export default function App() {
   );
 }
 
-// Home gets its own light placeholder; every other route — including /404,
-// which is where every real link currently points (see config/nav.js) —
-// renders NotFound instead.
+// Home gets its own light placeholder; Privacy Policy, Terms of Service, and
+// Contact are real and live. Every other route — including /404, which is
+// where every other link currently points (see config/nav.js) — renders
+// NotFound instead.
 function Page({ currentPath }) {
   const isHome = currentPath === PATHS.home;
+
+  if (currentPath === PATHS.privacy) {
+    return <PrivacyPolicy />;
+  }
+
+  if (currentPath === PATHS.terms) {
+    return <TermsOfService />;
+  }
+
+  if (currentPath === PATHS.contact) {
+    return <Contact />;
+  }
 
   if (!isHome) {
     return <NotFound />;

@@ -1,0 +1,319 @@
+/* ==========================================================================
+   Legal pages (Privacy Policy, Terms of Service)
+   Shares --shell-min/--shell-max with the navbar/footer via .shell so copy
+   stays on the same vertical line as the rest of the chrome.
+   ========================================================================== */
+
+.legal-page {
+  flex: 1;
+  background: var(--color-background);
+}
+
+/* ------------------------------------------------------------------- Hero */
+
+.legal-hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-primary);
+  padding-block: clamp(48px, 9vw, 96px) clamp(40px, 7vw, 72px);
+}
+
+/* Soft radial glow in the brand accent, purely decorative. */
+.legal-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(600px 300px at 12% -10%, color-mix(in srgb, var(--color-secondary) 26%, transparent), transparent 70%),
+    radial-gradient(500px 260px at 100% 0%, color-mix(in srgb, var(--color-secondary) 14%, transparent), transparent 70%);
+  pointer-events: none;
+}
+
+.legal-hero-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  max-width: 780px;
+}
+
+.legal-eyebrow {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  background: color-mix(in srgb, var(--color-secondary) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-secondary) 35%, transparent);
+  padding: 5px 14px;
+  border-radius: 999px;
+}
+
+.legal-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 5.5vw, 48px);
+  line-height: 1.1;
+  color: #fff;
+}
+
+.legal-updated {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: color-mix(in srgb, #fff 70%, transparent);
+}
+
+.legal-intro {
+  margin: 4px 0 0;
+  font-size: clamp(14px, 1.6vw, 16px);
+  line-height: 1.65;
+  color: color-mix(in srgb, #fff 88%, transparent);
+}
+
+.legal-intro a {
+  color: var(--color-secondary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ------------------------------------------------------------------- Body */
+
+.legal-body {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 64px);
+  align-items: start;
+  padding-block: clamp(32px, 6vw, 64px) clamp(56px, 8vw, 96px);
+}
+
+/* ------------------------------------------------------------- Table of contents */
+
+.legal-toc {
+  position: sticky;
+  top: calc(clamp(64px, 9vh, 84px) + 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.legal-toc-title {
+  margin: 0 0 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.legal-toc ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.legal-toc a {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  line-height: 1.35;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.legal-toc a:hover {
+  background: color-mix(in srgb, var(--color-secondary) 10%, transparent);
+  color: var(--color-text);
+}
+
+.legal-toc a.is-current {
+  background: color-mix(in srgb, var(--color-secondary) 16%, transparent);
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.legal-toc-index {
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+}
+
+.legal-toc a.is-current .legal-toc-index {
+  color: var(--color-primary);
+}
+
+/* ------------------------------------------------------------------ Content */
+
+.legal-content {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(28px, 4vw, 40px);
+  min-width: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: clamp(24px, 5vw, 48px);
+}
+
+.legal-section {
+  scroll-margin-top: calc(clamp(64px, 9vh, 84px) + 24px);
+  padding-bottom: clamp(24px, 4vw, 32px);
+  border-bottom: 1px solid var(--line);
+}
+
+.legal-section:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.legal-section h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 14px;
+  font-family: var(--font-display);
+  font-size: clamp(19px, 2.4vw, 24px);
+  color: var(--color-primary);
+}
+
+.legal-section-number {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-secondary) 16%, transparent);
+  color: var(--color-primary);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.legal-section h3 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  color: var(--color-text);
+  margin: 18px 0 8px;
+}
+
+.legal-section h3:first-child {
+  margin-top: 0;
+}
+
+.legal-section p {
+  margin: 0 0 12px;
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: var(--muted);
+}
+
+.legal-section p:last-child {
+  margin-bottom: 0;
+}
+
+.legal-section ul {
+  margin: 0 0 12px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.legal-section ul:last-child {
+  margin-bottom: 0;
+}
+
+.legal-section li {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.legal-section li strong {
+  color: var(--color-text);
+}
+
+.legal-section a {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.legal-contact-list {
+  list-style: none !important;
+  padding-left: 0 !important;
+  margin-top: 4px !important;
+  gap: 10px !important;
+}
+
+.legal-contact-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.legal-contact-list span {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-primary) 60%, transparent);
+  min-width: 60px;
+}
+
+/* ------------------------------------------------------------------ Responsive */
+
+/* Table of contents drops above the content and stops sticking once there's
+   no room to sit alongside it without cramping either column. */
+@media (max-width: 900px) {
+  .legal-body {
+    grid-template-columns: 1fr;
+  }
+
+  .legal-toc {
+    position: static;
+    order: -1;
+  }
+
+  .legal-toc ol {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .legal-toc a {
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 560px) {
+  .legal-content {
+    border-radius: 16px;
+    padding: 20px;
+  }
+
+  /* Phone-width screens (Android/iOS) skip the "On this page" table of
+     contents entirely — there's no room for it alongside the content, and
+     the section headings are close enough together that scrolling to find
+     one is faster than tapping through a jump list. */
+  .legal-toc {
+    display: none;
+  }
+}
