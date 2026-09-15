@@ -7,7 +7,8 @@
 CREATE TABLE IF NOT EXISTS hero_content (
   id               INTEGER PRIMARY KEY CHECK (id = 1),
   description      TEXT,
-  email            TEXT,
+  email_primary    TEXT,
+  email_secondary  TEXT,
   phone_primary    TEXT,
   phone_secondary  TEXT,
   address_display  TEXT,
@@ -53,6 +54,17 @@ CREATE TABLE IF NOT EXISTS internships (
   description  TEXT,
   sort_order   INTEGER NOT NULL DEFAULT 0,
   is_active    BOOLEAN NOT NULL DEFAULT true
+);
+
+-- Single admin account. email is unique so ensureAdmin.js can safely check
+-- "does this email already exist" on every boot without ever duplicating a
+-- row. password_hash is a bcrypt hash — the plaintext password is never
+-- stored, only emailed once at creation time.
+CREATE TABLE IF NOT EXISTS admin (
+  id             SERIAL PRIMARY KEY,
+  email          TEXT NOT NULL UNIQUE,
+  password_hash  TEXT NOT NULL,
+  created_at     TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE INDEX IF NOT EXISTS idx_services_sort    ON services (is_active, sort_order);

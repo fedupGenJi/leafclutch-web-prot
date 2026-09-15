@@ -19,6 +19,7 @@ async function getHero() {
     return {
       desc: orMissing(null),
       email: orMissing(null),
+      emailSecondary: orMissing(null),
       contactNumber: orMissing(null),
       contactNumberSecondary: null,
       address: orMissing(null),
@@ -28,7 +29,8 @@ async function getHero() {
 
   return {
     desc: orMissing(row.description),
-    email: orMissing(row.email),
+    email: orMissing(row.email_primary),
+    emailSecondary: orMissing(row.email_secondary),
     contactNumber: orMissing(row.phone_primary),
     // Secondary number is genuinely optional — null hides it rather than
     // printing '404' next to a real number.

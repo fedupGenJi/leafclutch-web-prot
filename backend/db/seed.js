@@ -5,11 +5,12 @@ const TODO_LINK = '/404';
 
 const HERO = {
   description:
-    'Empowering innovation through cutting-edge technology solutions, training, and digital transformation services.',
-  email: 'info@leafclutchtech.com.np',
-  phone_primary: '+977-9766715768',
-  phone_secondary: null,
-  address_display: 'Siddharthanagar, Rupandehi',
+  'Empowering innovation through cutting-edge technology solutions, training, and digital transformation services.',
+  email_primary: 'info@leafclutchtech.com.np',
+  email_secondary: 'careers@leafclutchtech.com.np',
+  phone_primary: '+977-9766722920',
+  phone_secondary: '+977-9766715768',
+  address_display: 'Siddharthanagar, Rupandehi, Nepal',
   map_link: TODO_LINK,
 };
 
@@ -64,11 +65,12 @@ async function seed() {
     if (await isEmpty(client, 'hero_content')) {
       await client.query(
         `INSERT INTO hero_content
-           (id, description, email, phone_primary, phone_secondary, address_display, map_link, updated_at)
-         VALUES (1, $1, $2, $3, $4, $5, $6, $7)`,
+           (id, description, email_primary, email_secondary, phone_primary, phone_secondary, address_display, map_link, updated_at)
+         VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8)`,
         [
           HERO.description,
-          HERO.email,
+          HERO.email_primary,
+          HERO.email_secondary,
           HERO.phone_primary,
           HERO.phone_secondary,
           HERO.address_display,

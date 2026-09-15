@@ -11,6 +11,7 @@ const REQUIRED_TABLES = [
   'services',
   'jobs',
   'internships',
+  'admin',
 ];
 
 // Prefer a single DATABASE_URL (what most hosted Postgres providers give you),

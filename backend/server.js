@@ -1,16 +1,23 @@
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const { pool, ensureTables } = require('./db');
 const { seed } = require('./db/seed');
+const { ensureAdmin } = require('./db/ensureAdmin');
 const contentRoutes = require('./routes/content.routes');
+const authRoutes = require('./routes/auth.routes');
 
 const PORT = process.env.PORT || 5000;
 const app = express();
 
-app.use(cors());
+// credentials: true is required for the browser to send/receive the admin
+// auth cookie cross-origin; pair with a specific origin (not "*") in
+// production if the frontend lives on a different domain.
+app.use(cors({ origin: process.env.FRONTEND_ORIGIN || true, credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 // Brand assets live here and are served to the pages. The only images the
 // frontend keeps locally are the intro animation logo and the browser tab
@@ -24,6 +31,7 @@ app.use(
 );
 
 app.use('/api', contentRoutes);
+app.use('/api/auth', authRoutes);
 
 app.get('/api/health', async (req, res) => {
   try {
@@ -58,6 +66,8 @@ async function start() {
   if (seeded.length) {
     console.log(`Seeded empty tables: ${seeded.join(', ')}`);
   }
+
+  await ensureAdmin();
 
   app.listen(PORT, () => {
     console.log(`API listening on http://localhost:${PORT}`);
