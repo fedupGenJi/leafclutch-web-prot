@@ -7,6 +7,8 @@ import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
 import TermsOfService from './pages/TermsOfService.jsx';
 import Contact from './pages/Contact.jsx';
 import About from './pages/About.jsx';
+import Services from './pages/Services.jsx';
+import ServiceDetail from './pages/ServiceDetail.jsx';
 import AdminApp from './pages/admin/AdminApp.jsx';
 import { SiteProvider } from './context/SiteContext.jsx';
 import { useCurrentPath } from './hooks/useCurrentPath.js';
@@ -131,6 +133,15 @@ function Page({ currentPath }) {
 
   if (currentPath === PATHS.about) {
     return <About />;
+  }
+
+  if (currentPath === PATHS.services) {
+    return <Services />;
+  }
+
+  if (currentPath.startsWith(`${PATHS.services}/`)) {
+    const slug = currentPath.slice(PATHS.services.length + 1);
+    return <ServiceDetail slug={slug} />;
   }
 
   if (!isHome) {
