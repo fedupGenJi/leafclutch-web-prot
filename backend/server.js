@@ -16,7 +16,7 @@ const app = express();
 // credentials: true is required for the browser to send/receive the admin
 // auth cookie cross-origin; pair with a specific origin (not "*") in
 // production if the frontend lives on a different domain.
-app.use(cors({ origin: process.env.FRONTEND_ORIGIN || true, credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
