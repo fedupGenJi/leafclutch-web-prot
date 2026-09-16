@@ -7,6 +7,8 @@
 // differs, this file (plus api/admin.js and api/brand.js, which reuse
 // authHeader()) is the only place that needs to change.
 
+import { apiUrl } from './base.js';
+
 const TOKEN_KEY = 'lc_admin_token';
 
 export function getToken() {
@@ -38,7 +40,7 @@ export async function verifySession() {
   if (!token) return null;
 
   try {
-    const res = await fetch('/api/admin/session', {
+    const res = await fetch(apiUrl('/api/admin/session'), {
       headers: { ...authHeader() },
     });
 
@@ -58,7 +60,7 @@ export async function verifySession() {
 }
 
 export async function login(email, password) {
-  const res = await fetch('/api/admin/login', {
+  const res = await fetch(apiUrl('/api/admin/login'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
@@ -88,7 +90,7 @@ export async function logout() {
   if (!token) return;
 
   try {
-    await fetch('/api/admin/logout', {
+    await fetch(apiUrl('/api/admin/logout'), {
       method: 'POST',
       headers: { ...authHeader() },
     });

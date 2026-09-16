@@ -1,14 +1,15 @@
 // Backs the Settings section of the admin dashboard (which reuses the
-// existing pages/BrandSettings.jsx). Referenced by that component but never
-// added to the project — filled in here with the same assumed-contract
+// existing pages/BrandSettings.jsx). Referenced by that component but was
+// missing from the project — restored here with the same assumed-contract
 // pattern as the rest of src/api/.
 
 import { authHeader, clearToken } from './auth.js';
 import { navigate } from '../utils/navigate.js';
 import { ADMIN_PATHS } from '../config/nav.js';
+import { apiUrl } from './base.js';
 
-async function authedRequest(url, options = {}) {
-  const res = await fetch(url, { ...options, headers: { ...authHeader(), ...options.headers } });
+async function authedRequest(path, options = {}) {
+  const res = await fetch(apiUrl(path), { ...options, headers: { ...authHeader(), ...options.headers } });
 
   if (res.status === 401) {
     clearToken();

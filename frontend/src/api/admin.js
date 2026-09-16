@@ -5,9 +5,10 @@
 import { authHeader, clearToken } from './auth.js';
 import { navigate } from '../utils/navigate.js';
 import { ADMIN_PATHS } from '../config/nav.js';
+import { apiUrl } from './base.js';
 
-async function authedFetch(url, options = {}) {
-  const res = await fetch(url, {
+async function authedFetch(path, options = {}) {
+  const res = await fetch(apiUrl(path), {
     ...options,
     headers: {
       ...(options.body ? { 'Content-Type': 'application/json' } : {}),

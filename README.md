@@ -21,11 +21,12 @@ The logo used in the intro animation and the browser tab icon are the only image
 
 ## API
 
-Public, read-only, no auth:
+Public, no auth:
 
 - `GET /api/site` — everything the homepage needs, one call
 - `GET /api/hero`, `/api/services`, `/api/jobs`, `/api/internships`
 - `GET /api/health`
+- `POST /api/contact` — the contact form. Validates the body server-side (name, email, phone required), then emails it to `ADMIN_EMAIL` via Resend using the same `RESEND_API_KEY`/`RESEND_FROM_EMAIL` used for the admin-password email. Replies go to the visitor's address, not the from-address, since Resend requires a verified sender.
 
 Everything under `/api/admin` needs a login: session/login, and CRUD for hero content, services, socials, jobs, and internships. Jobs and internships are two separate resources now (each with its own `GET/POST/PUT/DELETE`), not one merged list.
 
@@ -37,4 +38,6 @@ Everything under `/api/admin` needs a login: session/login, and CRUD for hero co
 
 ## Placeholder behavior
 
-No real subpages exist yet, so every link currently points at `/404`, and any content field that hasn't been filled in yet shows the literal text `404` rather than just being blank. Both of these go away once real pages exist to link to.
+Home, About, Services (including individual service detail pages), Contact, Privacy Policy, and Terms of Service are real, live pages. Everything else — Our Products, Training & Internship, Blogs, Career, FAQ, Our Works — has no page yet, so those links still point at `/404`. Live vs. placeholder is tracked in `frontend/src/config/nav.js`; a route goes live by adding its path there, no other change needed.
+
+Separately, any content field that hasn't been filled in yet shows the literal text `404` rather than just being blank. That one only goes away once real content is entered in the admin panel.

@@ -2,8 +2,10 @@
 // header — it's the same unauthenticated shape as api/site.js's fetchSite.
 // The backend is expected to take this payload and send it on as an email
 // to the team, rather than the form building a WhatsApp deep link itself.
+import { apiUrl } from './base.js';
+
 export async function sendContactMessage(payload) {
-  const res = await fetch('/api/contact', {
+  const res = await fetch(apiUrl('/api/contact'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
