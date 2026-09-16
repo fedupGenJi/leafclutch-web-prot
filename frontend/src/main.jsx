@@ -7,6 +7,7 @@ import './styles/legal.css';
 import './styles/contact.css';
 import './styles/about.css';
 import './styles/services.css';
+import './styles/home.css';
 import './styles/admin.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(

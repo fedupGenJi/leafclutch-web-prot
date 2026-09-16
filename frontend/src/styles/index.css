@@ -14,6 +14,11 @@
   --shell-min: 320px;
   --shell-max: 1320px;
 
+  /* Mirrors .navbar-inner's height in chrome.css — kept as a variable so any
+     section that needs to size itself against "the rest of the viewport
+     below the navbar" (see the Home hero) can calc() against one value. */
+  --nav-h: clamp(64px, 9vh, 84px);
+
   --font-display: 'Space Grotesk', sans-serif;
   --font-body: 'Inter', sans-serif;
 }

@@ -9,6 +9,7 @@ import Contact from './pages/Contact.jsx';
 import About from './pages/About.jsx';
 import Services from './pages/Services.jsx';
 import ServiceDetail from './pages/ServiceDetail.jsx';
+import Home from './pages/Home.jsx';
 import AdminApp from './pages/admin/AdminApp.jsx';
 import { SiteProvider } from './context/SiteContext.jsx';
 import { useCurrentPath } from './hooks/useCurrentPath.js';
@@ -112,10 +113,9 @@ export default function App() {
   );
 }
 
-// Home gets its own light placeholder; Privacy Policy, Terms of Service, and
-// Contact are real and live. Every other route — including /404, which is
-// where every other link currently points (see config/nav.js) — renders
-// NotFound instead.
+// Home, Privacy Policy, Terms of Service, and Contact are real and live.
+// Every other route — including /404, which is where every other link
+// currently points (see config/nav.js) — renders NotFound instead.
 function Page({ currentPath }) {
   const isHome = currentPath === PATHS.home;
 
@@ -148,10 +148,5 @@ function Page({ currentPath }) {
     return <NotFound />;
   }
 
-  return (
-    <main className="homepage">
-      <h1>{brand.siteName}</h1>
-      <p>Page content coming soon.</p>
-    </main>
-  );
+  return <Home />;
 }
