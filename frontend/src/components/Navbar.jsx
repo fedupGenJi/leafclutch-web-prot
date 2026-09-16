@@ -3,7 +3,7 @@ import Icon from './Icon.jsx';
 import RollingTextButton from './RollingTextButton.jsx';
 import { useSite } from '../context/SiteContext.jsx';
 import { useCurrentPath } from '../hooks/useCurrentPath.js';
-import { PATHS, hrefFor, isPathActive, anyPathActive } from '../config/nav.js';
+import { PATHS, hrefFor, isLivePath, isPathActive, anyPathActive } from '../config/nav.js';
 import { navigateOnClick } from '../utils/navigate.js';
 
 const MOBILE_BREAKPOINT = 1024;
@@ -111,12 +111,20 @@ export default function Navbar() {
     setOpenMenu((prev) => (prev === menu ? null : menu));
   }
 
-  // The Contact button now navigates client-side instead of doing a full
-  // page reload to the /404 placeholder, so — like the logo — it needs to
-  // close the mobile menu itself rather than relying on the reload to do it.
-  const handleContactNavigate = (e) => {
+  // The Contact button navigates client-side instead of doing a full page
+  // reload, so — like the logo — it needs to close the mobile menu itself
+  // rather than relying on a reload to do it. Home/About Us/Services do the
+  // same via closeMenus, passed down to the link components below; every
+  // other link is still a placeholder pointing at /404 with no onClick, so a
+  // normal browser navigation (and the reload that comes with it) handles
+  // closing the mobile menu for those.
+  function closeMenus() {
     setMobileOpen(false);
     setOpenMenu(null);
+  }
+
+  const handleContactNavigate = (e) => {
+    closeMenus();
     navigateOnClick(PATHS.contact)(e);
   };
 
@@ -133,8 +141,8 @@ export default function Navbar() {
         </a>
 
         <nav className="navbar-links" aria-label="Main">
-          <NavLink label="Home" path={PATHS.home} currentPath={currentPath} />
-          <NavLink label="About Us" path={PATHS.about} currentPath={currentPath} />
+          <NavLink label="Home" path={PATHS.home} currentPath={currentPath} onNavigate={closeMenus} />
+          <NavLink label="About Us" path={PATHS.about} currentPath={currentPath} onNavigate={closeMenus} />
 
           <Dropdown
             label="Services"
@@ -185,8 +193,8 @@ export default function Navbar() {
 
       <div id="mobile-menu" className={`mobile-menu ${mobileOpen ? 'is-open' : ''}`} hidden={!mobileOpen}>
         <nav className="mobile-nav" aria-label="Mobile">
-          <MobileLink label="Home" path={PATHS.home} currentPath={currentPath} />
-          <MobileLink label="About Us" path={PATHS.about} currentPath={currentPath} />
+          <MobileLink label="Home" path={PATHS.home} currentPath={currentPath} onNavigate={closeMenus} />
+          <MobileLink label="About Us" path={PATHS.about} currentPath={currentPath} onNavigate={closeMenus} />
 
           <MobileGroup
             label="Services"
@@ -195,6 +203,7 @@ export default function Navbar() {
             isActive={servicesActive}
             isOpen={openMenu === 'services'}
             onToggle={() => toggle('services')}
+            onNavigate={closeMenus}
           />
 
           <MobileLink label="Our Products" path={PATHS.products} currentPath={currentPath} />
@@ -220,13 +229,25 @@ export default function Navbar() {
   );
 }
 
-function NavLink({ label, path, currentPath }) {
+// Live paths (Home, About Us, Services) navigate client-side via the History
+// API, same as Contact/Privacy/Terms/Admin elsewhere in the site. Everything
+// still on the placeholder list gets a plain href to /404 with no onClick,
+// so a normal (reload-triggering) browser navigation handles it.
+function NavLink({ label, path, currentPath, onNavigate }) {
   const active = isPathActive(currentPath, path);
+  const live = isLivePath(path);
+  const handleClick = live
+    ? (e) => {
+        navigateOnClick(path)(e);
+        onNavigate?.();
+      }
+    : undefined;
   return (
     <a
       className={`nav-link ${active ? 'is-current' : ''}`}
       href={hrefFor(path)}
       aria-current={active ? 'page' : undefined}
+      onClick={handleClick}
     >
       {label}
     </a>
@@ -263,6 +284,13 @@ function Dropdown({
       <ul className="nav-dropdown-panel" role="menu">
         {items.map((item) => {
           const active = isPathActive(currentPath, item.path, item.exact);
+          const live = isLivePath(item.path);
+          const handleClick = live
+            ? (e) => {
+                navigateOnClick(item.path)(e);
+                onNavigate?.();
+              }
+            : onNavigate;
           return (
             <li key={item.key || item.label} role="none">
               <a
@@ -270,7 +298,7 @@ function Dropdown({
                 href={hrefFor(item.path)}
                 className={active ? 'is-current' : ''}
                 aria-current={active ? 'page' : undefined}
-                onClick={onNavigate}
+                onClick={handleClick}
               >
                 {item.label}
               </a>
@@ -282,20 +310,28 @@ function Dropdown({
   );
 }
 
-function MobileLink({ label, path, currentPath }) {
+function MobileLink({ label, path, currentPath, onNavigate }) {
   const active = isPathActive(currentPath, path);
+  const live = isLivePath(path);
+  const handleClick = live
+    ? (e) => {
+        navigateOnClick(path)(e);
+        onNavigate?.();
+      }
+    : undefined;
   return (
     <a
       className={`mobile-link ${active ? 'is-current' : ''}`}
       href={hrefFor(path)}
       aria-current={active ? 'page' : undefined}
+      onClick={handleClick}
     >
       {label}
     </a>
   );
 }
 
-function MobileGroup({ label, items, currentPath, isActive, isOpen, onToggle }) {
+function MobileGroup({ label, items, currentPath, isActive, isOpen, onToggle, onNavigate }) {
   return (
     <div className={`mobile-group ${isOpen ? 'is-open' : ''}`}>
       <button
@@ -311,12 +347,20 @@ function MobileGroup({ label, items, currentPath, isActive, isOpen, onToggle }) 
       <ul className="mobile-sublist">
         {items.map((item) => {
           const active = isPathActive(currentPath, item.path, item.exact);
+          const live = isLivePath(item.path);
+          const handleClick = live
+            ? (e) => {
+                navigateOnClick(item.path)(e);
+                onNavigate?.();
+              }
+            : undefined;
           return (
             <li key={item.key || item.label}>
               <a
                 href={hrefFor(item.path)}
                 className={active ? 'is-current' : ''}
                 aria-current={active ? 'page' : undefined}
+                onClick={handleClick}
               >
                 {item.label}
               </a>

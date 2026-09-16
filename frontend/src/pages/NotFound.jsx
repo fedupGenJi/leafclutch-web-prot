@@ -1,9 +1,10 @@
 import { PATHS } from '../config/nav.js';
 import { navigateOnClick } from '../utils/navigate.js';
 
-// Every unbuilt route currently lands here (see config/nav.js — every real
-// link points at PLACEHOLDER_LINK until USE_PLACEHOLDER_LINKS flips off), so
-// this doubles as both the true 404 and the "nothing here yet" placeholder.
+// Every unbuilt route currently lands here (see config/nav.js — links for
+// pages that aren't live yet point at PLACEHOLDER_LINK until their path is
+// added to LIVE_PATHS), so this doubles as both the true 404 and the
+// "nothing here yet" placeholder.
 // It shares the .homepage layout so it sits identically to the real
 // placeholder, just with its own copy and a way back.
 export default function NotFound() {

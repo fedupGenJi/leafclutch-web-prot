@@ -1,14 +1,16 @@
 import Icon from './Icon.jsx';
 import { useSite } from '../context/SiteContext.jsx';
-import { PATHS, hrefFor } from '../config/nav.js';
+import { PATHS, hrefFor, isLivePath } from '../config/nav.js';
 import { navigateOnClick } from '../utils/navigate.js';
 
 const MISSING = '404';
 
+// Home, About Us, and Services are live and navigate client-side; Our
+// Products is still a placeholder pointing at /404 with no onClick.
 const COMPANY_LINKS = [
-  { label: 'Home', href: hrefFor(PATHS.home) },
-  { label: 'About Us', href: hrefFor(PATHS.about) },
-  { label: 'Services', href: hrefFor(PATHS.services) },
+  { label: 'Home', href: hrefFor(PATHS.home), onClick: navigateOnClick(PATHS.home) },
+  { label: 'About Us', href: hrefFor(PATHS.about), onClick: navigateOnClick(PATHS.about) },
+  { label: 'Services', href: hrefFor(PATHS.services), onClick: navigateOnClick(PATHS.services) },
   { label: 'Our Products', href: hrefFor(PATHS.products) },
   { label: 'Contact', href: PATHS.contact, onClick: navigateOnClick(PATHS.contact) },
 ];
@@ -25,12 +27,16 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   const serviceLinks = [
-    { label: 'All Services', href: hrefFor(PATHS.services), key: 'all' },
-    ...services.map((s) => ({
-      label: s.name,
-      href: hrefFor(`${PATHS.services}/${s.slug}`),
-      key: s.slug || s.id,
-    })),
+    { label: 'All Services', href: hrefFor(PATHS.services), key: 'all', onClick: navigateOnClick(PATHS.services) },
+    ...services.map((s) => {
+      const path = `${PATHS.services}/${s.slug}`;
+      return {
+        label: s.name,
+        href: hrefFor(path),
+        key: s.slug || s.id,
+        onClick: isLivePath(path) ? navigateOnClick(path) : undefined,
+      };
+    }),
   ];
 
   return (
@@ -39,7 +45,12 @@ export default function Footer() {
         <div className="footer-grid">
           <div className="footer-brand">
             {/* Footer logo goes home, unlike the navbar logo which scrolls up. */}
-            <a href={hrefFor(PATHS.home)} className="footer-logo" aria-label="Leafclutch Technologies — home">
+            <a
+              href={hrefFor(PATHS.home)}
+              className="footer-logo"
+              aria-label="Leafclutch Technologies — home"
+              onClick={navigateOnClick(PATHS.home)}
+            >
               <img src={assets.logoHorizontal} alt="Leafclutch Technologies" />
             </a>
 

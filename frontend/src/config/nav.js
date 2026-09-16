@@ -1,11 +1,10 @@
 // Real route structure, defined now so the active-underline logic has
 // something meaningful to match against.
 //
-// The pages don't exist yet, so every link still points at /404. Matching is
-// done against the REAL path below, not the placeholder — flip
-// USE_PLACEHOLDER_LINKS to false once the routes are live and the whole site
-// starts navigating properly with no other change.
-export const USE_PLACEHOLDER_LINKS = true;
+// Most pages don't exist yet, so most links still point at /404. Matching is
+// done against the REAL path below, not the placeholder — add a path to
+// LIVE_PATHS once its page ships and the link starts navigating there with
+// no other change.
 export const PLACEHOLDER_LINK = '/404';
 
 export const PATHS = {
@@ -24,8 +23,19 @@ export const PATHS = {
   admin: '/admin',
 };
 
+// Pages that are real and live right now. Everything else — Our Products,
+// Training & Internship, Blogs, Career, FAQ, Our Works — still routes to the
+// /404 placeholder until its page ships.
+const LIVE_PATHS = new Set([PATHS.home, PATHS.about, PATHS.services]);
+
+export function isLivePath(path) {
+  // Individual service pages (e.g. /services/cybersecurity) are live too,
+  // since ServiceDetail renders for any path under /services.
+  return LIVE_PATHS.has(path) || path.startsWith(`${PATHS.services}/`);
+}
+
 export function hrefFor(path) {
-  return USE_PLACEHOLDER_LINKS ? PLACEHOLDER_LINK : path;
+  return isLivePath(path) ? path : PLACEHOLDER_LINK;
 }
 
 /**
